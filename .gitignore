@@ -9,8 +9,6 @@
 ../app/.env
 dumps/
 *.log
-media/*
-!media/default
 .vscode/settings.json
 .env
 *data
