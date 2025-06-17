@@ -2,6 +2,7 @@ import csv
 
 from tabulate import tabulate
 
+
 class Filter:
     @staticmethod
     def eq(x: str, y: str) -> bool:
@@ -27,7 +28,9 @@ class Filter:
         "gt": gt,
     }
 
-    def filter(self, rows: list[dict], column: str, operator: str, value: str) -> list[dict]:
+    def filter(
+        self, rows: list[dict], column: str, operator: str, value: str
+    ) -> list[dict]:
         if operator not in self.methods:
             raise ValueError(f"Unsupported operator: {operator}")
         op_func = self.methods[operator]
@@ -62,6 +65,7 @@ class Aggregator:
             return target_value
         return [row for row in rows if float(row[column]) == target_value]
 
+
 class Sorter:
     @staticmethod
     def order_by(rows: list[dict], column: str, order: str) -> list[dict]:
@@ -70,11 +74,16 @@ class Sorter:
             raise ValueError(f"Unsupported sort order: {order}")
 
         reverse = order == "desc"
-        return sorted(rows,
-                      key=lambda row: float(
-                          row[column]) if row[column
-                      ].replace('.', '', 1).isdigit() else row[column],
-                      reverse=reverse)
+        return sorted(
+            rows,
+            key=lambda row: (
+                float(row[column])
+                if row[column].replace(".", "", 1).isdigit()
+                else row[column]
+            ),
+            reverse=reverse,
+        )
+
 
 class CSVProcessor:
     def __init__(
@@ -82,7 +91,7 @@ class CSVProcessor:
         file_path: str,
         filterer: Filter | None = None,
         aggregator: Aggregator | None = None,
-        sorter: Sorter | None = None
+        sorter: Sorter | None = None,
     ) -> None:
         self.file_path = file_path
         self.rows = self._read_csv()
@@ -107,7 +116,9 @@ class CSVProcessor:
         if isinstance(result, list):
             self.rows = result
         else:
-            print(f"\033[92mAggregation result ({agg_type}) for column '{column}': {result}\033[0m")
+            print(
+                f"\033[92mAggregation result ({agg_type}) for column '{column}': {result}\033[0m"
+            )
 
     def order_by(self, column: str, order: str) -> None:
         if not self.sorter:
